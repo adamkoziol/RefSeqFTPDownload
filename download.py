@@ -19,7 +19,7 @@ class FTPdownload(object):
             strainmetadata = MetadataObject()
             # Set the sample name in the object
             strainmetadata.accession = organism['assembly_accession']
-            # Iterate through the keys (column headers for each
+            # Iterate through the keys (column headers)
             for column in organism:
                 # Add the attributes to the object
                 setattr(strainmetadata, column, organism[column]) if column else setattr(strainmetadata, column, 'NA')
@@ -27,9 +27,8 @@ class FTPdownload(object):
 
     def downloading(self):
         from threading import Thread
-        # Create the object
         printtime('Downloading files', self.starttime)
-        # for i in range(len(self.organisms)):
+        # Create and start the threads
         for i in range(4):
             # Send the threads to
             threads = Thread(target=self.download, args=())
@@ -38,13 +37,6 @@ class FTPdownload(object):
             # Start the threading
             threads.start()
         for organism in self.organisms:
-            # orgs = ['GCF_000002035.5', 'GCF_000002075.1', 'GCF_000002195.4', 'GCF_000002235.4', 'GCF_000002265.2',
-            #         'GCF_000002275.2', 'GCF_000002285.3', 'GCF_000002295.2', 'GCF_000002305.2', 'GCF_900091675.1',
-            #         'GCF_000002315.4']
-            # orgs = ['GCF_900091675.1']
-            # for org in orgs:
-            #     if organism.accession == org:
-                    # if organism.accession == 'GCF_900091675.1':
             # The FTP path takes you to the index of the genomes of the organism. The file I want is in the
             # following format: ftp path + everything after the final '/' + _genomic.fna.gz
             # ftp://ftp.ncbi.nlm.nih.gov/genomes/all/GCF_000002315.4_Gallus_gallus-5.0/GCF_000002315.4_
@@ -58,10 +50,6 @@ class FTPdownload(object):
         self.queue.join()
 
     def download(self):
-        """
-        adapted from:
-        https://stackoverflow.com/questions/6963283/python-urllib2-resume-download-doesnt-work-when-network-reconnects
-        """
         import zlib
         from cStringIO import StringIO
         import re
@@ -98,7 +86,6 @@ class FTPdownload(object):
                     if os.path.isfile(organism.localfile) or os.path.isfile(organism.decompressed):
                         count = os.path.getsize(organism.localfile) if os.path.isfile(organism.localfile) else \
                             os.path.getsize(organism.decompressed)
-                    print organism.accession, count, organism.filesize
                     # If the local file size is the same as the filesize on the ftp, then don't download
                     if count >= organism.filesize:
                         # Already downloaded
@@ -122,7 +109,7 @@ class FTPdownload(object):
                             curlinstance.close()
                             # Decompress the data - use zlib to decompress the data in the StingIO instance. The
                             # zlib.MAX_WBITS|16 argument tells zlib that the data is gzipped
-                            nextline = zlib.decompress(filebuffer.getvalue(), zlib.MAX_WBITS|16)
+                            nextline = zlib.decompress(filebuffer.getvalue(), zlib.MAX_WBITS | 16)
                             # Write the data to the file
                             localfile.write(nextline)
                             # Once finished, set success to True to break the while loop
@@ -185,7 +172,7 @@ if __name__ == '__main__':
                               shell=True, stdout=subprocess.PIPE).communicate()[0].rstrip()
     from argparse import ArgumentParser
     # Parser for arguments
-    parser = ArgumentParser(description='Assemble genomes from Illumina fastq files')
+    parser = ArgumentParser(description='Download genomes from refseq')
     parser.add_argument('-v', '--version',
                         action='version', version='%(prog)s commit {}'.format(commit))
     parser.add_argument('path',
