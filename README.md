@@ -10,9 +10,11 @@ the following packages need to be installed:
 * build-essential
 * python-pip
 * python-dev
-* zlibg-dev
+* zlib1g-dev
 * libcurl4-openssl-dev
 * libssl-dev
+
+`sudo apt-get install -y build-essential python-pip python-dev zlib1g-dev libcurl4-openssl-dev libssl-dev`
 
 # Installation
 
@@ -80,7 +82,8 @@ optional arguments:
 
 Uses the supplied assembly_summary_refseq.txt file to determine ftp paths of every organism in refseq, and downloads
 each \*_genomic.fna.gz file in the database. If you replace the assembly_summary_refseq.txt file with a new version,
-please ensure that you delete any comments at the top of the file.
+( ftp://ftp.ncbi.nlm.nih.gov/genomes/refseq/assembly_summary_refseq.txt ), please ensure that you delete any comments 
+at the top of the file.
 
 ### Example command
 
