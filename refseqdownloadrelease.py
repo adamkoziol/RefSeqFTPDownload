@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import subprocess
-import multiprocessing
 import pycurl
 from cStringIO import StringIO
 from SPAdesPipeline.OLCspades.accessoryFunctions import *
@@ -52,7 +51,7 @@ class FTPdownload(object):
         # Create the object
         printtime('Downloading files', self.starttime)
         # Start four threads
-        for i in range(4):
+        for i in range(self.threads):
             # Send the threads to
             threads = Thread(target=self.download, args=())
             # Set the daemon to True - something to do with thread management
@@ -156,8 +155,8 @@ class FTPdownload(object):
         self.downloadpath = ''
         # Define the start time
         self.starttime = startingtime
-        # Use the argument for the number of threads to use, or default to the number of cpus in the system
-        self.cpus = args.threads if args.threads else multiprocessing.cpu_count()
+        # Use the argument for the number of threads to use
+        self.threads = args.threads
         # Assertions to ensure that the provided variables are valid
         make_path(self.path)
         assert os.path.isdir(self.path), u'Supplied path location is not a valid directory {0!r:s}'.format(self.path)
@@ -185,7 +184,7 @@ class FTPdownload(object):
         # Capture the links for the files to download
         self.ftplinks()
         # Perform the multithreaded (up to four at once) download
-        self.queue = Queue(maxsize=4)
+        self.queue = Queue(maxsize=self.threads)
         self.downloading()
 
 # If the script is called from the command line, then call the argument parser
@@ -206,11 +205,10 @@ if __name__ == '__main__':
                         action='version', version='%(prog)s commit {}'.format(commit))
     parser.add_argument('path',
                         help='Specify path')
-    parser.add_argument('-d', '--downloadpath',
-                        help='Path in which to place the downloads. If not supplied, this defaults to your current'
-                             'working directory/downloads')
     parser.add_argument('-t', '--threads',
-                        help='Number of threads. Default is the number of cores in the system')
+                        default=4,
+                        help='Number of threads. Default is 4, as I don\'t want to anger NCBI. '
+                             'Increase at your own risk')
     parser.add_argument('-c', '--category',
                         help='Choose one or more of the following categories of refseq genomes to download: archaea, '
                              'bacteria, fungi, invertebrate, plant, plasmid, protozoa, vertebrate_mammalian, '

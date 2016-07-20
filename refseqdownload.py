@@ -1,6 +1,5 @@
 #!/usr/bin/env python
 import subprocess
-import multiprocessing
 from SPAdesPipeline.OLCspades.accessoryFunctions import *
 
 __author__ = 'adamkoziol'
@@ -29,7 +28,7 @@ class FTPdownload(object):
         from threading import Thread
         printtime('Downloading files', self.starttime)
         # Create and start the threads
-        for i in range(4):
+        for i in range(self.threads):
             # Send the threads to
             threads = Thread(target=self.download, args=())
             # Set the daemon to True - something to do with thread management
@@ -135,8 +134,8 @@ class FTPdownload(object):
             .format(self.path)
         # Define the start time
         self.starttime = startingtime
-        # Use the argument for the number of threads to use, or default to the number of cpus in the system
-        self.cpus = args.threads if args.threads else multiprocessing.cpu_count()
+        # Use the argument for the number of threads to use
+        self.threads = args.threads
         # Assertions to ensure that the provided variables are valid
         make_path(self.path)
         assert os.path.isdir(self.path), u'Supplied path location is not a valid directory {0!r:s}'.format(self.path)
@@ -156,7 +155,7 @@ class FTPdownload(object):
         # Load the information stored in the assembly_summary_refseq.txt file into a dictionary
         self.summaryload()
         # Perform the multithreaded (up to four at once) download
-        self.queue = Queue(maxsize=4)
+        self.queue = Queue(maxsize=self.threads)
         self.downloading()
 
 # If the script is called from the command line, then call the argument parser
@@ -181,7 +180,8 @@ if __name__ == '__main__':
                         help='Path in which to place the downloads. If not supplied, this defaults to your current'
                              'working directory/downloads')
     parser.add_argument('-t', '--threads',
-                        help='Number of threads. Default is the number of cores in the system')
+                        default=4,
+                        help='Number of threads. Default is 4')
     # Get the arguments into an object
     arguments = parser.parse_args()
     starttime = time()

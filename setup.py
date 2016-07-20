@@ -13,5 +13,6 @@ setup(
     description='Script to download refseq release or refseq assemblies in a slightly parallel fashion',
     url='https://github.com/adamkoziol/RefSeqFTPDownload',
     long_description=open('README.md').read(),
-    install_requires=['pycurl'],
+    install_requires=['pycurl',
+                      'biopython >= 1.65'],
 )
