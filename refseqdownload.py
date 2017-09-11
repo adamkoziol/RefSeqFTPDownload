@@ -100,7 +100,7 @@ class FTPdownload(object):
                             # Set the desired encoding type to be gzip
                             curlinstance.setopt(curlinstance.ENCODING, 'gzip')
                             curlinstance.setopt(curlinstance.URL, organism.ftp)
-                            # Allow pycurl to follow redirects. This isn't required now, but might be n the future
+                            # Allow pycurl to follow redirects. This isn't required now, but might be in the future
                             curlinstance.setopt(curlinstance.FOLLOWLOCATION, True)
                             # Write the (gzipped) data to the StringIO instance
                             curlinstance.setopt(curlinstance.WRITEFUNCTION, filebuffer.write)
@@ -114,8 +114,8 @@ class FTPdownload(object):
                             # Once finished, set success to True to break the while loop
                             success = True
                             downloading = False
-                except IOError, e:
-                    print '\nDownload error, retrying in a few seconds: ' + str(e)
+                except IOError as e:
+                    print('\nDownload error, retrying in a few seconds: ' + str(e))
                     sleep(5)
             dotter()
             # Finish with the thread

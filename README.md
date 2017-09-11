@@ -7,6 +7,7 @@
 If you plan on running installing the required modules using setup.py, following an `apt-get update` 
 the following packages need to be installed:
 
+* git
 * build-essential
 * python-pip
 * python-dev
@@ -14,7 +15,7 @@ the following packages need to be installed:
 * libcurl4-openssl-dev
 * libssl-dev
 
-`sudo apt-get install -y build-essential python-pip python-dev zlib1g-dev libcurl4-openssl-dev libssl-dev`
+`sudo apt-get install -y build-essential git python-pip python-dev zlib1g-dev libcurl4-openssl-dev libssl-dev`
 
 # Installation
 
